@@ -1,0 +1,29 @@
+{
+  "name": "externalized-config",
+  "version": "0.2.0",
+  "keywords": [ "externalized", "config", "configuration" ],
+  "repository" : {
+    "type" : "git",
+    "url" : "git://github.com/jonthanmiller/externalized-config.git"
+  },
+  "bugs": "https://github.com/jonthanmiller/externalized-config/issues",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
+  "main": "externalized-config.js",
+  "dependencies": {
+    "underscore": "*",
+    "optimist": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
+  },
+  "author" : {
+    "name" : "Jonathan Miller",
+    "email" : "jonathan.michael.miller@gmail.com",
+    "url" : "http://monkd.us"
+  }
+}
+
