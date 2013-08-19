@@ -14,31 +14,42 @@ var _getUserHome = function () {
 };
 
 var _loadConfig = function( name ) {
-	
+
 	// console.log( "processing configuration for " + name );
 
-	var envName  = defaultOptions.env.replace( "{{appname}}", name.toUpperCase() ).replace( "-", "_" ),
+	function replaceAll( str, find, replace ) {
+		if ( _.isString( find ) )
+			return str.replace( new RegExp( find, 'g' ), replace );
+		else if ( _.isArray( find ) ) {
+			_.each( find, function( it ) {
+				str = str.replace( new RegExp( it[0], 'g' ), it[1] );
+			});
+		}
+		return str;
+	}
+
+	var envName  = replaceAll( defaultOptions.env, [ [ "{{appname}}", name.toUpperCase() ], [ "-", "_" ] ] ),
 	    envValue = process.env[ envName ];
 
     // console.log( "env -> " + envName + "; " + envValue );
 
 	if ( _.isUndefined( envValue ) || envValue == "undefined" ) {
 
-		var dotValue = defaultOptions.dot.replace( "{{appname}}", name.toLowerCase() ).replace( "~", _getUserHome() ).replace( "-", "_" );
-		
+		var dotValue = replaceAll( defaultOptions.dot, [ [ "{{appname}}", name.toLowerCase() ], [ "~", _getUserHome() ], [ "-", "_" ] ] );
+
 		if ( fs.existsSync( dotValue ) ) {
 			console.log( "configuration file " + dotValue + " loaded" );
 		 	return _parse( dotValue );
 		}
 		else {
-			
+
 			if ( _.isUndefined( argv.config ) ) {
 				console.log( "No configuration specified" );
 				return false;
 			}
 			else {
 
-				var argValue = argv.config.replace( "~", _getUserHome() ).replace( "-", "_" );
+				var argValue = replaceAll( argv.config, [ [ "{{appname}}", name.toLowerCase() ], [ "~", _getUserHome() ], [ "-", "_" ] ] );
 
 				if ( fs.existsSync( argValue ) ) {
 					console.log( "configuration file " + argValue + " loaded" );
@@ -55,8 +66,8 @@ var _loadConfig = function( name ) {
 
 	}
 	else {
-		
-		envValue = envValue.replace( "~", _getUserHome() );
+
+		envValue = replaceAll( envValue, "~", _getUserHome() );
 
 		if ( fs.existsSync( envValue ) ) {
 			console.log( "configuration file " + envValue + " loaded" );
