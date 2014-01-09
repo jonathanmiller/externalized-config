@@ -46,7 +46,10 @@ describe( "externalized-config module tests", function() {
         };
 
     after(function() {
-      fs.unlink( fileName );
+      try {
+        fs.unlinkSync( fileName );
+      }
+      catch( err ) { }
     });
 
     fs.writeFileSync( fileName, JSON.stringify( testData ) );
@@ -59,4 +62,24 @@ describe( "externalized-config module tests", function() {
 
   });
 
+  it( "should load configuration from a local project location", function() {
+
+    var fileName = process.cwd() + "/externalized-config.json",
+        testData = {
+          "aaa": "zzzz"
+        }; 
+
+    fs.unlinkSync( home + "/.config/externalized_config.json" );
+
+    fs.writeFileSync( fileName, JSON.stringify( testData ) ); 
+
+    process.env[ "EXTERNALIZED_CONFIG_CONFIG" ] = undefined;
+
+    var config = module();
+
+    fs.unlinkSync( fileName );
+
+    expect( config.aaa ).to.equal( 'zzzz' ); 
+  });
 });
+

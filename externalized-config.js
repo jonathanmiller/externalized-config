@@ -4,9 +4,10 @@ var fs   = require( 'fs' ),
 
 
 var defaultOptions = {
-	env: "{{appname}}_CONFIG",
-	dot: "~/.config/{{appname}}.json",
-	opt: "--config"
+  local: process.cwd() + "/{{appname}}.json",
+	env:   "{{appname}}_CONFIG",
+	dot:   "~/.config/{{appname}}.json",
+	opt:   "--config"
 };
 
 var _getUserHome = function () {
@@ -42,13 +43,15 @@ var _loadConfig = function( name ) {
 		 	return _parse( dotValue );
 		}
 		else {
-
 			if ( _.isUndefined( argv.config ) ) {
-				console.log( "No configuration specified" );
-				return false;
+        dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] );  
+
+        if ( fs.existsSync( dotValue ) ) { 
+          console.log( "configuration file " + dotValue + " loaded" );
+          return _parse( dotValue );
+        }  
 			}
 			else {
-
 				var argValue = replaceAll( argv.config, [ [ "{{appname}}", name.toLowerCase() ], [ "~", _getUserHome() ], [ "-", "_" ] ] );
 
 				if ( fs.existsSync( argValue ) ) {
@@ -56,17 +59,16 @@ var _loadConfig = function( name ) {
 		 			return _parse( argValue );
 				}
 				else {
-					console.log( "configuration file " + envValue + " does not exist" );
-					return false;
+          dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] ); 
+          if ( fs.existsSync( dotValue ) ) { 
+            console.log( "configuration file " + dotValue + " loaded" );
+            return _parse( dotValue );
+          }   
 				}
-
 			}
-
 		}
-
 	}
 	else {
-
 		envValue = replaceAll( envValue, "~", _getUserHome() );
 
 		if ( fs.existsSync( envValue ) ) {
@@ -77,9 +79,10 @@ var _loadConfig = function( name ) {
 			console.log( "configuration file " + envValue + " does not exist" );
 			return false;
 		}
-
 	}
 
+  console.log( "No configuration specified" );
+  return false;
 };
 
 
