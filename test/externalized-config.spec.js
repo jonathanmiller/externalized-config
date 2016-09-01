@@ -1,5 +1,6 @@
-var _      = require( "underscore" ),
-    fs     = require( "fs" ),
+var fs     = require( "fs" ),
+    isFunction = require( "lodash.isfunction" ),
+    isUndefined = require( "lodash.isundefined" ),
     expect = require( "chai" ).expect,
     module = require( "../externalized-config" ),
     home   = process.env[ ( process.platform == 'win32' ) ? 'USERPROFILE' : 'HOME' ];
@@ -10,8 +11,8 @@ describe( "externalized-config module tests", function() {
 
     var config = config = module();
 
-    expect( _.isFunction(  module ) ).to.be.true;
-    expect( _.isUndefined( config ) ).to.be.false;
+    expect( isFunction(  module ) ).to.be.true;
+    expect( isUndefined( config ) ).to.be.false;
 
   });
 
@@ -53,7 +54,7 @@ describe( "externalized-config module tests", function() {
     });
 
     fs.writeFileSync( fileName, JSON.stringify( testData ) );
-  	
+
     process.env[ "EXTERNALIZED_CONFIG_CONFIG" ] = undefined;
 
     var config = module();
@@ -67,11 +68,11 @@ describe( "externalized-config module tests", function() {
     var fileName = process.cwd() + "/externalized-config.json",
         testData = {
           "aaa": "zzzz"
-        }; 
+        };
 
     fs.unlinkSync( home + "/.config/externalized_config.json" );
 
-    fs.writeFileSync( fileName, JSON.stringify( testData ) ); 
+    fs.writeFileSync( fileName, JSON.stringify( testData ) );
 
     process.env[ "EXTERNALIZED_CONFIG_CONFIG" ] = undefined;
 
@@ -79,7 +80,6 @@ describe( "externalized-config module tests", function() {
 
     fs.unlinkSync( fileName );
 
-    expect( config.aaa ).to.equal( 'zzzz' ); 
+    expect( config.aaa ).to.equal( 'zzzz' );
   });
 });
-

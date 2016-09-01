@@ -1,6 +1,9 @@
 var fs   = require( 'fs' ),
-	_    = require( 'underscore' ),
-	argv = require( 'optimist' ).argv;
+    argv = require( 'optimist' ).argv,
+    forEach = require( 'lodash.foreach' ),
+    isArray = require( 'lodash.isarray' ),
+    isString = require( 'lodash.isstring' ),
+    isUndefined  = require( 'lodash.isundefined' );
 
 
 var defaultOptions = {
@@ -19,10 +22,10 @@ var _loadConfig = function( name ) {
 	// console.log( "processing configuration for " + name );
 
 	function replaceAll( str, find, replace ) {
-		if ( _.isString( find ) )
+		if ( isString( find ) )
 			return str.replace( new RegExp( find, 'g' ), replace );
-		else if ( _.isArray( find ) ) {
-			_.each( find, function( it ) {
+		else if ( isArray( find ) ) {
+			forEach( find, function( it ) {
 				str = str.replace( new RegExp( it[0], 'g' ), it[1] );
 			});
 		}
@@ -34,7 +37,7 @@ var _loadConfig = function( name ) {
 
     // console.log( "env -> " + envName + "; " + envValue );
 
-	if ( _.isUndefined( envValue ) || envValue == "undefined" ) {
+	if ( isUndefined( envValue ) || envValue == "undefined" ) {
 
 		var dotValue = replaceAll( defaultOptions.dot, [ [ "{{appname}}", name.toLowerCase() ], [ "~", _getUserHome() ], [ "-", "_" ] ] );
 
@@ -43,13 +46,13 @@ var _loadConfig = function( name ) {
 		 	return _parse( dotValue );
 		}
 		else {
-			if ( _.isUndefined( argv.config ) ) {
-        dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] );  
+			if ( isUndefined( argv.config ) ) {
+        dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] );
 
-        if ( fs.existsSync( dotValue ) ) { 
+        if ( fs.existsSync( dotValue ) ) {
           console.log( "configuration file " + dotValue + " loaded" );
           return _parse( dotValue );
-        }  
+        }
 			}
 			else {
 				var argValue = replaceAll( argv.config, [ [ "{{appname}}", name.toLowerCase() ], [ "~", _getUserHome() ], [ "-", "_" ] ] );
@@ -59,11 +62,11 @@ var _loadConfig = function( name ) {
 		 			return _parse( argValue );
 				}
 				else {
-          dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] ); 
-          if ( fs.existsSync( dotValue ) ) { 
+          dotValue = replaceAll( defaultOptions.local, [ [ "{{appname}}", name.toLowerCase() ] ] );
+          if ( fs.existsSync( dotValue ) ) {
             console.log( "configuration file " + dotValue + " loaded" );
             return _parse( dotValue );
-          }   
+          }
 				}
 			}
 		}
