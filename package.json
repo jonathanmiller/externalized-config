@@ -1,6 +1,6 @@
 {
   "name": "externalized-config",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "keywords": [ "externalized", "config", "configuration" ],
   "repository" : {
     "type" : "git",
@@ -13,12 +13,12 @@
   },
   "main": "externalized-config.js",
   "dependencies": {
-    "underscore": "*",
-    "optimist": "*"
+    "underscore": "1.8.3",
+    "optimist": "0.6.1"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*"
+    "mocha": "3.0.2",
+    "chai": "3.5.0"
   },
   "author" : {
     "name" : "Jonathan Miller",
@@ -26,4 +26,3 @@
     "url" : "http://monkd.us"
   }
 }
-
